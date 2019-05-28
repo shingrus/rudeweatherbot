@@ -10,15 +10,15 @@ import (
 	"strconv"
 	"sync"
 	"time"
-
 	//"github.com/boltdb/bolt"
-
 )
 
-var tokenEnvVar = "TELETOKEN"
+const tokenEnvVar = "TELETOKEN"
 
 const accuWeatherEnvVar = "ACCUWEATHERAPI"
-const openWeatherEnvVar = "OPENWEATHERAPI"
+
+//const openWeatherEnvVar = "OPENWEATHERAPI"
+const hourToSendEnvVar = "HOURTOSEND"
 
 const databaseName = "users.db"
 const chatsBucket = "chats"
@@ -28,7 +28,7 @@ const sendDateKey = "sendDateKey"
 const TEXT_START = "Здарова, @%s, теперь я буду хуярить в тебя погодой каждое утро"
 const TEXT_STOP = "@%s, заебало тебе писать, все равно не читаешь"
 
-const hourToSend = 12
+const DEFAULT_HOUR_TOSEND = 9
 
 type Chats struct {
 	chatsMap map[int64]tb.Chat
@@ -75,10 +75,9 @@ func (chats *Chats) RemoveChat(id int64) {
 
 }
 
-//TODO Try with closure
 var _lastSendDate time.Time
 
-func getLastSendDate() (time.Time) {
+func getLastSendDate() time.Time {
 	if _lastSendDate.IsZero() {
 		db, err := bolt.Open(databaseName, 0600, nil)
 		if err != nil {
@@ -129,6 +128,11 @@ func (chats *Chats) getChats() (ret []tb.Chat) {
 
 func (chats *Chats) SendToAllChatsDaily(b *tb.Bot, forecast *WatherForecast, force bool) {
 
+	hourToSend, err := strconv.Atoi(os.Getenv(hourToSendEnvVar))
+	if err != nil || hourToSend == 0 {
+		hourToSend = DEFAULT_HOUR_TOSEND
+	}
+
 	for {
 		now := time.Now()
 		hours, _, _ := now.Clock()
@@ -138,7 +142,7 @@ func (chats *Chats) SendToAllChatsDaily(b *tb.Bot, forecast *WatherForecast, for
 			lastSendDate := getLastSendDate()
 			fmt.Printf("Time diff in hours: %f and force is %t", time.Since(lastSendDate).Hours(), force)
 			if force || (forecast.isFresh() && time.Since(lastSendDate).Hours() > 23) {
-				text:= forecast.GetRudeForecast()
+				text := forecast.GetRudeForecast()
 				for _, chat := range chats.getChats() {
 					_, err := b.Send(&chat, text)
 					if err != nil {
@@ -150,14 +154,14 @@ func (chats *Chats) SendToAllChatsDaily(b *tb.Bot, forecast *WatherForecast, for
 						}
 					}
 				}
-				//if !force {
-				//	updateLastSendDate(now)
-				//}
+				if !force {
+					updateLastSendDate(now)
+				}
 			}
 		} else {
 			log.Printf("Time hours(%d), not the time to send(%d)", hours, hourToSend)
 		}
-		time.Sleep(time.Second*60)
+		time.Sleep(time.Second * 60)
 	}
 }
 
@@ -237,7 +241,7 @@ func main() {
 
 	userChannel := make(chan *tb.Chat)
 	go sendWeather(b, userChannel, forecast)
-	go chats.SendToAllChatsDaily(b,forecast,false)
+	go chats.SendToAllChatsDaily(b, forecast, false)
 
 	if err != nil {
 		log.Fatal(err)
@@ -245,7 +249,10 @@ func main() {
 	}
 
 	b.Handle("/hello", func(m *tb.Message) {
-		b.Send(m.Sender, TEXT_START)
+		_, err := b.Send(m.Sender, TEXT_START)
+		if err != nil {
+			log.Fatal(err)
+		}
 	})
 	b.Handle("/update", func(m *tb.Message) {
 
@@ -253,20 +260,29 @@ func main() {
 	})
 
 	b.Handle("/unsubscribe", func(m *tb.Message) {
-		b.Send(m.Chat, fmt.Sprintf(TEXT_STOP, m.Sender.Username))
+		_, err := b.Send(m.Chat, fmt.Sprintf(TEXT_STOP, m.Sender.Username))
+		if err != nil {
+			log.Fatal(err)
+		}
 		chats.RemoveChat(m.Chat.ID)
 		//users.RemoveUser(m.Sender.ID)
 
 	})
 	b.Handle("/stop", func(m *tb.Message) {
-		b.Send(m.Chat, fmt.Sprintf(TEXT_STOP, m.Sender.Username))
+		_, err := b.Send(m.Chat, fmt.Sprintf(TEXT_STOP, m.Sender.Username))
+		if err != nil {
+			log.Fatal(err)
+		}
 		chats.RemoveChat(m.Chat.ID)
 		//users.RemoveUser(m.Sender.ID)
 
 	})
 
 	b.Handle("/subscribe", func(m *tb.Message) {
-		b.Send(m.Chat, fmt.Sprintf(TEXT_START, m.Sender.Username, ))
+		_, err := b.Send(m.Chat, fmt.Sprintf(TEXT_START, m.Sender.Username))
+		if err != nil {
+			log.Fatal(err)
+		}
 		chats.AddChat(*m.Chat)
 	})
 
@@ -276,7 +292,10 @@ func main() {
 	//})
 
 	b.Handle("/start", func(m *tb.Message) {
-		b.Send(m.Chat, fmt.Sprintf(TEXT_START, m.Sender.Username))
+		_, err := b.Send(m.Chat, fmt.Sprintf(TEXT_START, m.Sender.Username))
+		if err != nil {
+			log.Fatal(err)
+		}
 		chats.AddChat(*m.Chat)
 	})
 	//
