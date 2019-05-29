@@ -140,7 +140,7 @@ func (chats *Chats) SendToAllChatsDaily(b *tb.Bot, forecast *WatherForecast, for
 		if force || hours == hourToSend {
 			//check if we already sent today
 			lastSendDate := getLastSendDate()
-			fmt.Printf("Time diff in hours: %f and force is %t", time.Since(lastSendDate).Hours(), force)
+			fmt.Printf("Time diff in hours: %f and force is %t\n", time.Since(lastSendDate).Hours(), force)
 			if force || (forecast.isFresh() && time.Since(lastSendDate).Hours() > 23) {
 				text := forecast.GetRudeForecast()
 				for _, chat := range chats.getChats() {
