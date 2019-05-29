@@ -28,7 +28,7 @@ const sendDateKey = "sendDateKey"
 const TEXT_START = "Здарова, @%s, теперь я буду хуярить в тебя погодой каждое утро"
 const TEXT_STOP = "@%s, заебало тебе писать, все равно не читаешь"
 
-const DEFAULT_HOUR_TOSEND = 9
+const DEFAULT_HOUR_TOSEND = 23
 
 type Chats struct {
 	chatsMap map[int64]tb.Chat
@@ -88,7 +88,7 @@ func getLastSendDate() time.Time {
 			b := tx.Bucket([]byte(sendDateBucket))
 			val := b.Get([]byte(sendDateKey))
 			if val != nil {
-				fmt.Printf("saved time: %s\n", string(val))
+				log.Printf("saved time: %s\n", string(val))
 				_lastSendDate, err = time.Parse(time.UnixDate, string(val))
 				if err != nil {
 					log.Println(err)
