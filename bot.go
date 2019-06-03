@@ -161,7 +161,7 @@ func (chats *Chats) SendToAllChatsDaily(b *tb.Bot, forecast *WatherForecast, for
 		} else {
 			log.Printf("Time hours(%d), not the time to send(%d)", hours, hourToSend)
 		}
-		time.Sleep(time.Second * 60)
+		time.Sleep(time.Second * 62)
 	}
 }
 
