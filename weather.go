@@ -22,7 +22,19 @@ type WatherForecast struct {
 }
 
 type WeatherText struct {
-	point int32
+	counter int
+	texts   []string
+}
+
+//
+func (wtext *WeatherText) getNextText() string {
+
+	if wtext.counter == -1 {
+		wtext.counter = rand.Intn(len(wtext.texts))
+	}
+	wtext.counter++
+	wtext.counter = wtext.counter % len(wtext.texts)
+	return wtext.texts[wtext.counter]
 }
 
 func (forecast *WatherForecast) getWeatherEveryNsec(N uint64 /*, b *tb.Bot,  chats *Chats*/) {
@@ -39,15 +51,18 @@ func (forecast *WatherForecast) getWeatherEveryNsec(N uint64 /*, b *tb.Bot,  cha
 const TEXT_DEFAULT = "Отъебись, не знаю"
 
 //const TEXT_CLOUD_GOOD = "За окном  заебца, можешь ебануть пивчанского"
-var TEXTS_CLOUD_GOOD = []string{"За окном  заебца, можешь ебануть пивчанского.", "Там пиздато, лучше только в запое.", "Сегодня будет охуительно.",
-	"Сегодня ты - директор пляжа, выдави крема на ебло.", "Жмурься на солнышко с удовольствием, скоро это закончится."}
-var TEXTS_CLOUD_MEH = []string{"На улице хуево, лучше накатить коньячку.", "Какая-то блядская сегодня погода, предлагаю вискаря.",
-	"Там все пусто и бессмысленно, мы же в России.", "На улице, как в постели с бывшей, - никак."}
-var TEXTS_CLOUD_BAD = []string{"За окном пизда, займи и выпей водки.", "Оч хуево сегодня, отправь гонца за хмурым.",
-	"Не вылезай из кровати, не допускай этой ошибки.", "За окном Челябинск и Череповец, \"ничего личного, просто пиздец\"."}
+//var TEXTS_CLOUD_GOOD = []string{"За окном  заебца, можешь ебануть пивчанского.", "Там пиздато, лучше только в запое.", "Сегодня будет охуительно.",
+//	"Сегодня ты - директор пляжа, выдави крема на ебло.", "Жмурься на солнышко с удовольствием, скоро это закончится."}
+var TEXTS_CLOUD_GOOD = WeatherText{-1, []string{"За окном  заебца, можешь ебануть пивчанского.", "Там пиздато, лучше только в запое.", "Сегодня будет охуительно.",
+	"Сегодня ты - директор пляжа, выдави крема на ебло.", "Жмурься на солнышко с удовольствием, скоро это закончится."}}
 
-var TEXTS_RAIN_MEH = []string{"С неба может пиздануть, нехуй там делать.", "Возможно ливанет."}
-var TEXTS_RAIN_BAD = []string{"Кстати, не проеби зонт.", "Зонт не забудь, блять.", "Дождевичок накинь, епта."}
+var TEXTS_CLOUD_MEH = WeatherText{-1, []string{"На улице хуево, лучше накатить коньячку.", "Какая-то блядская сегодня погода, предлагаю вискаря.",
+	"Там все пусто и бессмысленно, мы же в России.", "На улице, как в постели с бывшей, - никак."}}
+
+var TEXTS_CLOUD_BAD = WeatherText{-1, []string{"За окном пизда, займи и выпей водки.", "Оч хуево сегодня, отправь гонца за хмурым.", "За окном Челябинск и Череповец, \"ничего личного, просто пиздец\"."}}
+
+var TEXTS_RAIN_MEH = WeatherText{-1, []string{"С неба может пиздануть, нехуй там делать.", "Возможно ливанет."}}
+var TEXTS_RAIN_BAD = WeatherText{-1, []string{"На улицу соберешься - зонт не забудь, блять.", "Будешь выходить - дождевичок накинь, епта."}}
 
 func (forecast *WatherForecast) isFresh() (fresh bool) {
 
@@ -61,18 +76,19 @@ func (forecast *WatherForecast) GetRudeForecast() (text string) {
 
 	switch forecast.CloudPrediction {
 	case 3:
-		text = TEXTS_CLOUD_GOOD[rand.Intn(len(TEXTS_CLOUD_GOOD))]
+		//text = TEXTS_CLOUD_GOOD[rand.Intn(len(TEXTS_CLOUD_GOOD))]
+		text = TEXTS_CLOUD_GOOD.getNextText()
 	case 2:
-		text = TEXTS_CLOUD_MEH[rand.Intn(len(TEXTS_CLOUD_MEH))]
+		text = TEXTS_CLOUD_MEH.getNextText()
 	case 1:
-		text = TEXTS_CLOUD_BAD[rand.Intn(len(TEXTS_CLOUD_BAD))]
+		text = TEXTS_CLOUD_BAD.getNextText()
 	}
 
 	switch forecast.RainPrediction {
 	case 1:
-		text += " " + TEXTS_RAIN_MEH[rand.Intn(len(TEXTS_RAIN_MEH))]
+		text += " " + TEXTS_RAIN_MEH.getNextText()
 	case 2:
-		text += " " + TEXTS_RAIN_BAD[rand.Intn(len(TEXTS_RAIN_BAD))]
+		text += " " + TEXTS_RAIN_BAD.getNextText()
 	}
 	return
 }
