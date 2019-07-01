@@ -21,6 +21,10 @@ type WatherForecast struct {
 	updateTime      time.Time
 }
 
+type WeatherText struct {
+	point int32
+}
+
 func (forecast *WatherForecast) getWeatherEveryNsec(N uint64 /*, b *tb.Bot,  chats *Chats*/) {
 
 	for {
@@ -42,8 +46,8 @@ var TEXTS_CLOUD_MEH = []string{"На улице хуево, лучше нака�
 var TEXTS_CLOUD_BAD = []string{"За окном пизда, займи и выпей водки.", "Оч хуево сегодня, отправь гонца за хмурым.",
 	"Не вылезай из кровати, не допускай этой ошибки.", "За окном Челябинск и Череповец, \"ничего личного, просто пиздец\"."}
 
-const TEXT_RAIN_MEH = " С неба может пиздануть, нехуй там делать."
-const TEXT_RAIN_BAD = " Кстати, не проеби зонт."
+var TEXTS_RAIN_MEH = []string{"С неба может пиздануть, нехуй там делать.", "Возможно ливанет."}
+var TEXTS_RAIN_BAD = []string{"Кстати, не проеби зонт.", "Зонт не забудь, блять.", "Дождевичок накинь, епта."}
 
 func (forecast *WatherForecast) isFresh() (fresh bool) {
 
@@ -66,9 +70,9 @@ func (forecast *WatherForecast) GetRudeForecast() (text string) {
 
 	switch forecast.RainPrediction {
 	case 1:
-		text += TEXT_RAIN_MEH
+		text += " " + TEXTS_RAIN_MEH[rand.Intn(len(TEXTS_RAIN_MEH))]
 	case 2:
-		text += TEXT_RAIN_BAD
+		text += " " + TEXTS_RAIN_BAD[rand.Intn(len(TEXTS_RAIN_BAD))]
 	}
 	return
 }
