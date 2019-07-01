@@ -50,9 +50,6 @@ func (forecast *WatherForecast) getWeatherEveryNsec(N uint64 /*, b *tb.Bot,  cha
 
 const TEXT_DEFAULT = "Отъебись, не знаю"
 
-//const TEXT_CLOUD_GOOD = "За окном  заебца, можешь ебануть пивчанского"
-//var TEXTS_CLOUD_GOOD = []string{"За окном  заебца, можешь ебануть пивчанского.", "Там пиздато, лучше только в запое.", "Сегодня будет охуительно.",
-//	"Сегодня ты - директор пляжа, выдави крема на ебло.", "Жмурься на солнышко с удовольствием, скоро это закончится."}
 var TEXTS_CLOUD_GOOD = WeatherText{-1, []string{"За окном  заебца, можешь ебануть пивчанского.", "Там пиздато, лучше только в запое.", "Сегодня будет охуительно.",
 	"Сегодня ты - директор пляжа, выдави крема на ебло.", "Жмурься на солнышко с удовольствием, скоро это закончится."}}
 
@@ -76,7 +73,6 @@ func (forecast *WatherForecast) GetRudeForecast() (text string) {
 
 	switch forecast.CloudPrediction {
 	case 3:
-		//text = TEXTS_CLOUD_GOOD[rand.Intn(len(TEXTS_CLOUD_GOOD))]
 		text = TEXTS_CLOUD_GOOD.getNextText()
 	case 2:
 		text = TEXTS_CLOUD_MEH.getNextText()
