@@ -58,11 +58,16 @@ func (forecast *WatherForecast) updateOpenWeather() {
 		forecast.CloudPrediction = 1
 	}
 
+	// ID mapping: https://openweathermap.org/weather-conditions
 	for _, w := range jval.List[0].Weather {
 		if w.ID >= 500 && w.ID < 600 {
 			forecast.RainPrediction = 2
 		} else {
 			forecast.RainPrediction = 1
+		}
+
+		if w.ID >= 200 && w.ID < 300 {
+			forecast.RainPrediction = 2
 		}
 
 		if w.ID >= 800 {
