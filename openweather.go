@@ -60,6 +60,9 @@ func (forecast *WatherForecast) updateOpenWeather() {
 
 	// ID mapping: https://openweathermap.org/weather-conditions
 	for _, w := range jval.List[0].Weather {
+
+		fmt.Printf("Forecast: Weather:%s, ID: %d\n", w.Description, w.ID)
+
 		if w.ID >= 500 && w.ID < 600 {
 			forecast.RainPrediction = 2
 		} else {
@@ -85,24 +88,24 @@ func (forecast *WatherForecast) updateOpenWeather() {
 }
 
 type OpenWeatherForecastItem struct {
-	Dt int `json:"dt"`
+	Dt   int `json:"dt"`
 	Main struct {
-		Temp float64 `json:"temp"`
+		Temp     float64 `json:"temp"`
 		Pressure float64 `json:"pressure"`
-		Humidity int `json:"humidity"`
+		Humidity int     `json:"humidity"`
 	} `json:"main"`
 	Weather []struct {
-		ID int `json:"id"`
-		Main string `json:"main"`
+		ID          int    `json:"id"`
+		Main        string `json:"main"`
 		Description string `json:"description"`
-		Icon string `json:"icon"`
+		Icon        string `json:"icon"`
 	} `json:"weather"`
 	Clouds struct {
 		All int `json:"all"`
 	} `json:"clouds"`
 	Wind struct {
 		Speed float64 `json:"speed"`
-		Deg float64 `json:"deg"`
+		Deg   float64 `json:"deg"`
 	} `json:"wind"`
 }
 
