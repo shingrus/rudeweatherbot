@@ -16,8 +16,8 @@ import (
 const tokenEnvVar = "TELETOKEN"
 
 const accuWeatherEnvVar = "ACCUWEATHERAPI"
+const openWeatherEnvVar = "OPENWEATHERAPI"
 
-//const openWeatherEnvVar = "OPENWEATHERAPI"
 const hourToSendEnvVar = "HOURTOSEND"
 
 const databaseName = "users.db"

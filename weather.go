@@ -40,7 +40,8 @@ func (wtext *WeatherText) getNextText() string {
 func (forecast *WatherForecast) getWeatherEveryNsec(N uint64 /*, b *tb.Bot,  chats *Chats*/) {
 
 	for {
-		forecast.updateAccuWeather()
+		//forecast.updateAccuWeather()
+		forecast.updateOpenWeather()
 
 		//wake up every N minutes
 		time.Sleep(time.Second * time.Duration(N))
@@ -48,7 +49,7 @@ func (forecast *WatherForecast) getWeatherEveryNsec(N uint64 /*, b *tb.Bot,  cha
 	}
 }
 
-const TEXT_DEFAULT = "Отъебись, не знаю"
+const TEXT_DEFAULT = "Отъебись, не знаю."
 
 var TEXTS_CLOUD_GOOD = WeatherText{-1, []string{"За окном  заебца, можешь ебануть пивчанского.", "Там пиздато, лучше только в запое.", "Сегодня будет охуительно.",
 	"Сегодня ты - директор пляжа, выдави крема на ебло.", "Жмурься на солнышко с удовольствием, скоро это закончится."}}
@@ -162,7 +163,7 @@ func (forecast *WatherForecast) updateAccuWeather() {
 		}
 		err = res.Body.Close()
 	} else if res != nil && res.StatusCode != 200 {
-		log.Printf("Fetch weather error: %n %s", res.StatusCode, res.Status)
+		log.Printf("Fetch weather error: %d %s", res.StatusCode, res.Status)
 	} else {
 		log.Println(err)
 	}
