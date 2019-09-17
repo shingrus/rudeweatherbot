@@ -16,7 +16,7 @@ const apiUrl = "http://dataservice.accuweather.com/forecasts/v1/daily/1day/29402
 
 type WatherForecast struct {
 	mut             sync.Mutex
-	RainPrediction  int32 //0 - 3
+	RainPrediction  int32 //0 - no rain, 1 - light possible rain, 2 - rain
 	CloudPrediction int32 //0 -3 from bad to good
 	updateTime      time.Time
 }

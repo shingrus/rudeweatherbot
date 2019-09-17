@@ -63,14 +63,14 @@ func (forecast *WatherForecast) updateOpenWeather() {
 
 		fmt.Printf("Forecast: Weather:%s, ID: %d\n", w.Description, w.ID)
 
-		if w.ID >= 500 && w.ID < 600 {
+		if w.ID == 500 || w.ID == 200 { //rain prediction
+			forecast.RainPrediction = 1
+		} else if w.ID > 500 && w.ID < 600 {
+			forecast.RainPrediction = 2
+		} else if w.ID > 200 && w.ID < 300 { // thunderstorm
 			forecast.RainPrediction = 2
 		} else {
-			forecast.RainPrediction = 1
-		}
-
-		if w.ID >= 200 && w.ID < 300 {
-			forecast.RainPrediction = 2
+			forecast.RainPrediction = 0
 		}
 
 		if w.ID >= 800 {
