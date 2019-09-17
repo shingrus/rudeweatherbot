@@ -301,7 +301,7 @@ func main() {
 	})
 
 	b.Handle("/info", func(m *tb.Message) {
-		_, err := b.Send(m.Chat, fmt.Sprintf(TEXT_INFO, m.Sender.Username))
+		_, err := b.Send(m.Chat, fmt.Sprint(TEXT_INFO))
 		if err != nil {
 			log.Fatal(err)
 		}
