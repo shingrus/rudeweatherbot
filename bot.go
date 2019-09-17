@@ -27,6 +27,7 @@ const sendDateKey = "sendDateKey"
 
 const TEXT_START = "Здарова, @%s, теперь я буду хуярить в тебя погодой каждое утро"
 const TEXT_STOP = "@%s, заебало тебе писать, все равно не читаешь"
+const TEXT_INFO = "Это погодный бот. Он отправляет прогноз погоды в Москве каждое утро в 9:00. Источник погоды: https://openweathermap.org/find?q=%D0%BC%D0%BE%D1%81%D0%BA%D0%B2%D0%B0"
 
 const DEFAULT_HOUR_TOSEND = 23
 
@@ -298,7 +299,13 @@ func main() {
 		}
 		chats.AddChat(*m.Chat)
 	})
-	//
+
+	b.Handle("/info", func(m *tb.Message) {
+		_, err := b.Send(m.Chat, fmt.Sprintf(TEXT_INFO, m.Sender.Username))
+		if err != nil {
+			log.Fatal(err)
+		}
+	})
 
 	b.Start()
 }
