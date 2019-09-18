@@ -61,7 +61,7 @@ func (forecast *WatherForecast) updateOpenWeather() {
 	// ID mapping: https://openweathermap.org/weather-conditions
 	for _, w := range jval.List[0].Weather {
 
-		fmt.Printf("Forecast: Weather:%s, ID: %d\n", w.Description, w.ID)
+		fmt.Printf("Forecast: Weather:%s, ID: %d, Clouds: %d \n", w.Description, w.ID, jval.List[0].Clouds.All)
 
 		if w.ID == 500 || w.ID == 200 { //rain prediction
 			forecast.RainPrediction = 1
