@@ -50,7 +50,7 @@ func (forecast *WatherForecast) updateOpenWeather() {
 	forecast.mut.Lock()
 	defer forecast.mut.Unlock()
 
-	if jval.List[0].Clouds.All < 33 {
+	if jval.List[0].Clouds.All < 10 {
 		forecast.CloudPrediction = 3
 	} else if jval.List[0].Clouds.All < 66 {
 		forecast.CloudPrediction = 2
@@ -61,7 +61,7 @@ func (forecast *WatherForecast) updateOpenWeather() {
 	// ID mapping: https://openweathermap.org/weather-conditions
 	for _, w := range jval.List[0].Weather {
 
-		fmt.Printf("Forecast: Weather:%s, ID: %d, Clouds: %d \n", w.Description, w.ID, jval.List[0].Clouds.All)
+		fmt.Printf("Forecast: Weather:%s, ID: %d, Icon: %s, Clouds: %d \n", w.Description, w.ID, w.Icon, jval.List[0].Clouds.All)
 
 		if w.ID == 500 || w.ID == 200 { //rain prediction
 			forecast.RainPrediction = 1
