@@ -63,25 +63,29 @@ func (forecast *WatherForecast) updateOpenWeather() {
 
 		fmt.Printf("Forecast: Weather:%s, ID: %d, Icon: %s, Clouds: %d \n", w.Description, w.ID, w.Icon, jval.List[0].Clouds.All)
 
-		if w.ID == 500 || w.ID == 200 { //rain prediction
-			forecast.RainPrediction = 1
-		} else if w.ID > 500 && w.ID < 600 {
-			forecast.RainPrediction = 2
-		} else if w.ID > 200 && w.ID < 300 { // thunderstorm
-			forecast.RainPrediction = 2
-		} else {
-			forecast.RainPrediction = 0
+		if len(w.Icon) > 2 {
+			switch w.Icon[0:2] {
+			case "01": //clear sky
+				forecast.RainPrediction = 0
+				forecast.CloudPrediction = 3
+			case "02", "03": //few or scattered cloud
+				forecast.RainPrediction = 0
+				forecast.CloudPrediction = 2
+			case "04": //broken clouds
+				forecast.RainPrediction = 0
+				forecast.CloudPrediction = 1
+			case "09", "11": //shower
+				forecast.RainPrediction = 2
+				forecast.CloudPrediction = 1
+			case "10": //rain
+				forecast.RainPrediction = 1
+				forecast.CloudPrediction = 1
+			default:
+
+			}
+
 		}
 
-		if w.ID >= 800 {
-			if w.ID == 800 {
-				forecast.CloudPrediction = 3
-			} else if w.ID < 803 {
-				forecast.CloudPrediction = 2
-			} else {
-				forecast.CloudPrediction = 1
-			}
-		}
 	}
 
 	forecast.updateTime = time.Now()
